@@ -1,13 +1,21 @@
 defmodule EventsAppWeb.SessionController do
   use EventsAppWeb, :controller
 
-  def create(conn, %{"name" => name}) do
+  def create(conn, %{"name" => name, "email" => email}) do
     user = EventsApp.Users.get_user_by_name(name)
+    emailUser = EventsApp.Users.get_user_by_email(email)
+
     if user do
-      conn
-      |> put_session(:user_id, user.id)
-      |> put_flash(:info, "Welcome back #{user.name}")
-      |> redirect(to: Routes.page_path(conn, :index))
+      if user != emailUser do
+        conn
+	|> put_flash(:error, "Login failed: Username and Email don't match.")
+        |> redirect(to: Routes.page_path(conn, :index))
+      else
+        conn
+        |> put_session(:user_id, user.id)
+        |> put_flash(:info, "Welcome back #{user.name}")
+        |> redirect(to: Routes.page_path(conn, :index))
+      end
     else
       conn
       |> put_flash(:error, "Login failed.")

@@ -43,6 +43,10 @@ defmodule EventsApp.Users do
     Repo.get_by(User, name: name)
   end
 
+  def get_user_by_email(email) do
+    Repo.get_by(User, email: email)
+  end
+
   @doc """
   Creates a user.
 
