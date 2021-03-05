@@ -1,0 +1,26 @@
+<div class="row">
+  <div class="col">
+    <h1>Event Feed</h1>
+  </div>
+</div>
+
+<div class="row">
+  <%= for event <- @events do %>
+    <div class="col-sm-4 card">
+      <!--
+      <img class="card-img-top" src="" alt="">
+      -->
+
+      <div class="card-title">
+        <p class="card-text"><%=event.name %></p>
+      </div>
+
+      <div class="card-body">
+        <p class="card-text"><%=event.body %></p>
+        <p class="card-text"><%=event.date %></p>
+        <%= link "view", to: Routes.event_path(@conn, :show, event) %>
+      </div>
+
+    </div>
+  <% end %>
+</div>
