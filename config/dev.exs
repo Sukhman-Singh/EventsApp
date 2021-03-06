@@ -3,7 +3,7 @@ use Mix.Config
 # Configure your database
 config :events_app, EventsApp.Repo,
   username: "events_app",
-  password: "0ka7aanesuth",
+  password: "nahje5eiRu3i",
   database: "events_app_dev",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,

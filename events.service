@@ -1,0 +1,18 @@
+[Unit]
+Description=HW06 Multi Bulls
+
+[Service]
+Type=simple
+User=events
+Group=events
+Restart=on-failure
+Environment=MIX_ENV=prod
+Environment=PORT=4793
+Environment=PROD=true
+Environment=LANG=en_US.UTF-8
+
+WorkingDirectory=/home/events/www/EventsApp
+ExecStart=/bin/bash /home/events/www/EventsApp/start.sh
+
+[Install]
+WantedBy=multi-user.target
