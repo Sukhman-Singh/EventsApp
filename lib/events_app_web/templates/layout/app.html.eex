@@ -11,7 +11,7 @@
   <body>
 
     <div role="main" class="container">
-
+    <!-- taken from Prof Nat Tuck's lecture notes -->
     <div class="row">
         <div class="col my-2">
           <%= link "Home", to: "/" %>
