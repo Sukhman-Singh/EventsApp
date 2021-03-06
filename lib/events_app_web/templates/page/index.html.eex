@@ -6,7 +6,7 @@
     <% end %>
   </div>
 </div>
-
+<!-- taken from Prof Nat Tuck's lecture notes -->
 <div class="row">
   <%= for event <- @events do %>
     <div class="col-sm-4 card">
