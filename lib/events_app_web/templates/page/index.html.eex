@@ -1,6 +1,9 @@
 <div class="row">
   <div class="col">
     <h1>Event Feed</h1>
+    <%= if have_current_user?(@conn) do %>
+      <p><%= link "New Event", to: Routes.event_path(@conn, :new) %></p>
+    <% end %>
   </div>
 </div>
 

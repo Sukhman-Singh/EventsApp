@@ -1,12 +1,13 @@
 <p>
-  <span><%= link "Edit", to: Routes.event_path(@conn, :edit, @event) %></span>
+  <%= if have_current_user?(@conn) do %>
+    <span><%= link "Edit", to: Routes.event_path(@conn, :edit, @event) %></span>
+  <% end %>
   <span><%= link "Back", to: Routes.event_path(@conn, :index) %></span>
 </p>
 
-<h1>Show Event #<%= @event.id %></h1>
+<h1><%= @event.name %></h1>
 
 <div>
-  <%= @event.name %>
-  <%= @event.body %>
-  <%= @event.date %>
+  <p><%= @event.body %></p>
+  <p><%= @event.date %></p>
 </div>

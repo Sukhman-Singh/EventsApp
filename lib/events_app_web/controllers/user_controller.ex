@@ -15,14 +15,29 @@ defmodule EventsAppWeb.UserController do
   end
 
   def create(conn, %{"user" => user_params}) do
-    case Users.create_user(user_params) do
-      {:ok, user} ->
+    emailTaken = Users.get_user_by_email(Map.get(user_params, "email"))
+    userTaken = Users.get_user_by_name(Map.get(user_params, "name"))
+ 
+    if emailTaken do
+      conn
+      |> put_flash(:error, "Email already in use.")
+      |> redirect(to: Routes.user_path(conn, :index))
+    else
+      if userTaken do
         conn
-        |> put_flash(:info, "User created successfully.")
-        |> redirect(to: Routes.user_path(conn, :show, user))
+        |> put_flash(:error, "Name already in use.")
+        |> redirect(to: Routes.user_path(conn, :index))
+      else 
+        case Users.create_user(user_params) do
+          {:ok, user} ->
+            conn
+            |> put_flash(:info, "User created successfully.")
+            |> redirect(to: Routes.user_path(conn, :show, user))
 
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "new.html", changeset: changeset)
+          {:error, %Ecto.Changeset{} = changeset} ->
+            render(conn, "new.html", changeset: changeset)
+        end
+      end
     end
   end
 
