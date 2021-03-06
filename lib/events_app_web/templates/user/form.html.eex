@@ -5,6 +5,7 @@
     </div>
   <% end %>
 
+  <!-- taken from Prof Nat Tuck's lecture notes -->
   <div class="form-group">
     <%= label f, :name %>
     <%= text_input f, :name, class: "form-control" %>
