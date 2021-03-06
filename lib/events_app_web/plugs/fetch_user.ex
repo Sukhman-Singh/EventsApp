@@ -3,6 +3,7 @@ defmodule EventsAppWeb.Plugs.FetchUser do
 
   def init(args), do: args
 
+  # Taken from Prof Nat Tuck's lecture notes
   def call(conn, _args) do
     user = EventsApp.Users.get_user(get_session(conn, :user_id) || -1)
     if user do
