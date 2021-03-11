@@ -6,6 +6,8 @@ defmodule EventsApp.Events.Event do
     field :body, :string
     field :date, :utc_datetime
     field :name, :string
+    belongs_to :user, EventsApp.Users.User
+    has_many :comments, EventsApp.Comments.Comment
 
     timestamps()
   end
@@ -13,7 +15,7 @@ defmodule EventsApp.Events.Event do
   @doc false
   def changeset(event, attrs) do
     event
-    |> cast(attrs, [:name, :body, :date])
-    |> validate_required([:name, :body, :date])
+    |> cast(attrs, [:name, :body, :date, :user_id])
+    |> validate_required([:name, :body, :date, :user_id])
   end
 end

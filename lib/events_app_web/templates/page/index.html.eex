@@ -21,6 +21,7 @@
       <div class="card-body">
         <p class="card-text"><%=event.body %></p>
         <p class="card-text"><%=event.date %></p>
+	<p class="card-text">Event made by <%=event.user.name %></p>
         <%= link "view", to: Routes.event_path(@conn, :show, event) %>
       </div>
 

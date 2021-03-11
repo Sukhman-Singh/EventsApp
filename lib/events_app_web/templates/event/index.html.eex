@@ -13,6 +13,7 @@
   <tbody>
 <%= for event <- @events do %>
     <tr>
+      <td><%= event.user.name %></td>
       <td><%= event.name %></td>
       <td><%= event.body %></td>
       <td><%= event.date %></td>

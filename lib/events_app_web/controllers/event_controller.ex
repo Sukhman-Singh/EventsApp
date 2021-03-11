@@ -4,7 +4,19 @@ defmodule EventsAppWeb.EventController do
   alias EventsApp.Events
   alias EventsApp.Events.Event
   alias EventsAppWeb.Plugs
+
+  alias EventsApp.Comments
+
   plug Plugs.RequireUser when action in [:new, :edit, :create, :update]
+
+  plug :fetch_event when action in [:show, :edit, :update, :delete]
+  plug :require_owner when action in [:edit, :update, :delete]
+
+  def fetch_event(conn, _args) do
+    id = conn.params["id"]
+    event = Events.get_event!(id)
+    assign(conn, :event, event)
+  end
 
   def index(conn, _params) do
     events = Events.list_events()
@@ -17,6 +29,9 @@ defmodule EventsAppWeb.EventController do
   end
 
   def create(conn, %{"event" => event_params}) do
+    event_params = event_params
+    |> Map.put("user_id", conn.assigns[:current_user].id)
+
     case Events.create_event(event_params) do
       {:ok, event} ->
         conn
@@ -29,8 +44,13 @@ defmodule EventsAppWeb.EventController do
   end
 
   def show(conn, %{"id" => id}) do
-    event = Events.get_event!(id)
-    render(conn, "show.html", event: event)
+    event = Events.load_comments(conn.assigns[:event])
+    comm = %Comments.Comment{
+      event_id: event.id,
+      user_id: current_user_id(conn),
+    }
+    new_comment = Comments.change_comment(comm)
+    render(conn, "show.html", event: event, new_comment: new_comment)
   end
 
   def edit(conn, %{"id" => id}) do
@@ -60,5 +80,22 @@ defmodule EventsAppWeb.EventController do
     conn
     |> put_flash(:info, "Event deleted successfully.")
     |> redirect(to: Routes.event_path(conn, :index))
+  end
+
+  def require_owner(conn, _args) do
+    user = conn.assigns[:current_user]
+    event = conn.assigns[:event]
+	IO.inspect "----------------------"
+	IO.inspect event
+	IO.inspect user
+	IO.inspect "--------------------------"
+    if user.id == event.user_id do
+      conn
+    else
+      conn
+      |> put_flash(:error, "This is not your event.")
+      |> redirect(to: Routes.page_path(conn, :index))
+      |> halt()
+    end
   end
 end

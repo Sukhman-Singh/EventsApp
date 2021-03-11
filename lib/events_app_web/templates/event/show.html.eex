@@ -1,5 +1,5 @@
 <p>
-  <%= if have_current_user?(@conn) do %>
+  <%= if current_user_id?(@conn, @event.user_id) do %>
     <span><%= link "Edit", to: Routes.event_path(@conn, :edit, @event) %></span>
   <% end %>
   <span><%= link "Back", to: Routes.event_path(@conn, :index) %></span>
@@ -10,4 +10,28 @@
 <div>
   <p><%= @event.body %></p>
   <p><%= @event.date %></p>
+  <p>Event made by <%= @event.user_id %></p>
 </div>
+
+<h2>Add Comment</h2>
+
+<%= if have_current_user?(@conn) do %>
+  <%= render(
+    EventsAppWeb.CommentView,
+    "form.html",
+    changeset: @new_comment,
+    action: Routes.comment_path(@conn, :create)
+  ) %>
+<% end %>
+
+<h3>Comments</h3>
+
+<%= for comm <- @event.comments do %>
+  <div class="card">
+    <div class="card-body">
+      <p>Comment by <%= comm.user.name %></p>
+      <p class="card-text"><%= comm.body %></p>
+    </div>
+  </div>
+<% end %>
+

@@ -19,6 +19,11 @@ defmodule EventsApp.Events do
   """
   def list_events do
     Repo.all(Event)
+    |> Repo.preload(:user)
+  end
+
+  def load_comments(%Event{} = event) do
+    Repo.preload(event, [comments: :user])
   end
 
   @doc """
