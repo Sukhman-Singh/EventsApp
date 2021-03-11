@@ -3,6 +3,32 @@ defmodule EventsAppWeb.CommentController do
 
   alias EventsApp.Comments
   alias EventsApp.Comments.Comment
+  alias EventsAppWeb.Plugs
+
+  plug Plugs.RequireUser when action in [:new, :edit, :create, :update]
+
+  plug :fetch_comment when action in [:show, :edit, :update, :delete]
+  plug :require_owner when action in [:edit, :update, :delete]
+  
+  def require_owner(conn, _args) do
+    user = conn.assigns[:current_user]
+    comment = conn.assigns[:comment]
+
+    if user.id == comment.user_id do
+      conn
+    else
+      conn
+      |> put_flash(:error, "That isn't yours.")
+      |> redirect(to: Routes.page_path(conn, :index))
+      |> halt()
+    end
+  end
+
+  def fetch_comment(conn, _args) do
+    id = conn.params["id"]
+    comment = Comments.get_comment!(id)
+    assign(conn, :comment, comment)
+  end
 
   def index(conn, _params) do
     comments = Comments.list_comments()

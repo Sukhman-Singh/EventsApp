@@ -85,10 +85,6 @@ defmodule EventsAppWeb.EventController do
   def require_owner(conn, _args) do
     user = conn.assigns[:current_user]
     event = conn.assigns[:event]
-	IO.inspect "----------------------"
-	IO.inspect event
-	IO.inspect user
-	IO.inspect "--------------------------"
     if user.id == event.user_id do
       conn
     else

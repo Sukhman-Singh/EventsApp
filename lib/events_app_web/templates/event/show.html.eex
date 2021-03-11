@@ -13,9 +13,9 @@
   <p>Event made by <%= @event.user_id %></p>
 </div>
 
-<h2>Add Comment</h2>
 
 <%= if have_current_user?(@conn) do %>
+  <h2>Add Comment</h2>
   <%= render(
     EventsAppWeb.CommentView,
     "form.html",

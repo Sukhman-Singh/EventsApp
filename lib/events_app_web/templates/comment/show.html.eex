@@ -5,6 +5,7 @@
   <li>
     <strong>Body:</strong>
     <%= @comment.body %>
+    <%= @comment.user_id %>
   </li>
 
 </ul>
