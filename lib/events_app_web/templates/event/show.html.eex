@@ -14,6 +14,27 @@
 </div>
 
 
+<%= if current_user_id?(@conn, @event.user_id) do %>
+  <h2>Invite Someone</h2>
+  <%= render(
+    EventsAppWeb.InviteView,
+    "form.html",
+    changeset: @new_invite,
+    action: Routes.invite_path(@conn, :create)
+  ) %>
+<% end %>
+
+<h3>Invitees</h3>
+
+<%= for inv <- @event.invites do %>
+  <div class="card">
+    <div class="card-body">
+      <p><%= inv.user_email %></p>
+      <p class="card-text"><%= inv.response %></p>
+    </div>
+  </div>
+<% end %>
+
 <%= if have_current_user?(@conn) do %>
   <h2>Add Comment</h2>
   <%= render(

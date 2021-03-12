@@ -12,4 +12,17 @@ defmodule EventsAppWeb.Helpers do
     user = conn.assigns[:current_user]
     user && user.id
   end
+
+  def current_user_email(conn) do
+    user = conn.assigns[:current_user]
+    user.email
+  end
+
+#  def on_invite_list?(conni, event_id) do
+#    user = conn.assigns[:current_user]
+#    curr_email = user.email
+#
+#    
+#  end
+
 end
