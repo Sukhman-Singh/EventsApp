@@ -12,6 +12,25 @@ defmodule EventsAppWeb.EventController do
 
   plug :fetch_event when action in [:show, :edit, :update, :delete]
   plug :require_owner when action in [:edit, :update, :delete]
+  plug :require_invitee_or_owner when action in [:show]
+
+  def require_invitee_or_owner(conn, _args) do
+    user = conn.assigns[:current_user]
+    event = Events.load_invites(conn.assigns[:event])
+    invites = event.invites
+    |> Enum.map(fn x -> x.user_email end)
+    owner = EventsApp.Users.get_user(event.user_id)
+
+    if user && (Enum.member?(invites, user.email) || user.email === owner.email) do
+      conn
+    else
+      conn
+      |> put_flash(:error, "Only the owner and invitees can view events")
+      |> redirect(to: Routes.page_path(conn, :index))
+      |> halt()
+    end
+  end
+
 
   def fetch_event(conn, _args) do
     id = conn.params["id"]

@@ -7,6 +7,21 @@ defmodule EventsAppWeb.InviteController do
 
   plug :fetch_invite when action in [:show, :edit, :update, :delete]
   plug :require_event_owner when action in [:delete]
+  plug :require_invitee when action in [:edit, :update]
+
+  def require_invitee(conn, _args) do
+    user = conn.assigns[:current_user]
+    invite = conn.assigns[:invite]
+    
+    if user.email == invite.user_email do
+      conn
+    else
+      conn
+      |> put_flash(:error, "Only the invitee can respond to an invite.")
+      |> redirect(to: Routes.page_path(conn, :index))
+      |> halt()
+    end
+  end
 
   def fetch_invite(conn, _args) do
     id = conn.params["id"]
