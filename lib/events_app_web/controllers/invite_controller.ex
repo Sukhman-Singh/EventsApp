@@ -3,6 +3,35 @@ defmodule EventsAppWeb.InviteController do
 
   alias EventsApp.Invites
   alias EventsApp.Invites.Invite
+  alias EventsApp.Events
+
+  plug :fetch_invite when action in [:show, :edit, :update, :delete]
+  plug :require_event_owner when action in [:delete]
+
+  def fetch_invite(conn, _args) do
+    id = conn.params["id"]
+    invite = Invites.get_invite!(id)
+    assign(conn, :invite, invite)
+  end
+
+  def require_event_owner(conn, _args) do
+    user = conn.assigns[:current_user]
+	IO.inspect user
+    invite = conn.assigns[:invite]
+	IO.inspect invite
+    event = Events.get_event(invite.event_id)
+	IO.inspect event
+
+    if user.id == event.user_id do
+      conn
+    else
+      conn
+      |> put_flash(:error, "Only the owner of an event can delete an invite.")
+      |> redirect(to: Routes.page_path(conn, :index))
+      |> halt()
+    end
+  end
+
 
   def index(conn, _params) do
     invites = Invites.list_invites()

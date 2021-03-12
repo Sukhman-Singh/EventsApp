@@ -52,7 +52,6 @@ defmodule EventsAppWeb.EventController do
     }
     inv = %Invites.Invite{
       event_id: event.id,
-      user_email: current_user_email(conn),
     }
     new_comment = Comments.change_comment(comm)
     new_invite = Invites.change_invite(inv)

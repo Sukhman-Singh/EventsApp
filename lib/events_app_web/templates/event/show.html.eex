@@ -24,13 +24,21 @@
   ) %>
 <% end %>
 
-<h3>Invitees</h3>
+<h3>Invites</h3>
 
 <%= for inv <- @event.invites do %>
   <div class="card">
     <div class="card-body">
       <p><%= inv.user_email %></p>
       <p class="card-text"><%= inv.response %></p>
+
+      <%= if current_user_id?(@conn, @event.user_id) do %>
+        <td>
+          <span><%= link "Edit", to: Routes.invite_path(@conn, :edit, inv) %></span>
+          <span><%= link "Delete", to: Routes.invite_path(@conn, :delete, inv), method: :delete, data: [confirm: "Are you sure?"] %></span>
+        </td>
+      <% end %>
+
     </div>
   </div>
 <% end %>
