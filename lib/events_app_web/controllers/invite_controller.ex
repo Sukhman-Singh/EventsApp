@@ -16,11 +16,8 @@ defmodule EventsAppWeb.InviteController do
 
   def require_event_owner(conn, _args) do
     user = conn.assigns[:current_user]
-	IO.inspect user
     invite = conn.assigns[:invite]
-	IO.inspect invite
     event = Events.get_event(invite.event_id)
-	IO.inspect event
 
     if user.id == event.user_id do
       conn
@@ -44,14 +41,22 @@ defmodule EventsAppWeb.InviteController do
   end
 
   def create(conn, %{"invite" => invite_params}) do
-    case Invites.create_invite(invite_params) do
-      {:ok, invite} ->
-        conn
-        |> put_flash(:info, "Invite created successfully.")
-        |> redirect(to: Routes.invite_path(conn, :show, invite))
+    duplicateInvite = Invites.get_invite_by_email_and_event(Map.get(invite_params, "user_email"), Map.get(invite_params, "event_id"))
 
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "new.html", changeset: changeset)
+    if duplicateInvite do
+	conn
+          |> put_flash(:error, "This person has already been invited.")
+          |> redirect(to: Routes.invite_path(conn, :index))
+    else
+      case Invites.create_invite(invite_params) do
+        {:ok, invite} ->
+          conn
+          |> put_flash(:info, "Invite created successfully.")
+          |> redirect(to: Routes.invite_path(conn, :show, invite))
+
+        {:error, %Ecto.Changeset{} = changeset} ->
+          render(conn, "new.html", changeset: changeset)
+      end
     end
   end
 

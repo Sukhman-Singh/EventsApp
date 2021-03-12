@@ -1,3 +1,5 @@
+<%= if on_invite_list?(@conn, @event) || current_user_id?(@conn, @event.user_id) do %>
+
 <p>
   <%= if current_user_id?(@conn, @event.user_id) do %>
     <span><%= link "Edit", to: Routes.event_path(@conn, :edit, @event) %></span>
@@ -10,7 +12,8 @@
 <div>
   <p><%= @event.body %></p>
   <p><%= @event.date %></p>
-  <p>Event made by <%= @event.user_id %></p>
+  <img src="<%= Routes.user_path(@conn, :photo, @event.user_id) %>" alt="" width="50" height="50">
+  <p>Event made by <%= get_username_by_id(@event.user_id) %></p>
 </div>
 
 
@@ -26,15 +29,42 @@
 
 <h3>Invites</h3>
 
+<table>
+  <tr>
+    <th></th>
+    <th>Total</th>
+  </tr>
+  <tr>
+    <th>Yes</th>
+    <th><%= get_total_replies("yes", @event.invites) %></th>
+  </tr>
+  <tr>
+    <th>No</th>
+    <th><%= get_total_replies("no", @event.invites) %></th>
+  </tr>
+  <tr>
+    <th>Maybe</th>
+    <th><%= get_total_replies("maybe", @event.invites) %></th>
+  </tr>
+  <tr>
+    <th>No Reply</th>
+    <th><%= get_total_replies("noreply", @event.invites) %></th>
+  </tr>
+
+</table>
+
 <%= for inv <- @event.invites do %>
   <div class="card">
     <div class="card-body">
-      <p><%= inv.user_email %></p>
-      <p class="card-text"><%= inv.response %></p>
+      <p>Invitee: <%= get_username_by_email(inv.user_email) %></p>
+        <p class="card-text">Current Response: <%= inv.response %></p>
 
-      <%= if current_user_id?(@conn, @event.user_id) do %>
+      <%= if current_user_email?(@conn, inv.user_email) do %>
         <td>
           <span><%= link "Edit", to: Routes.invite_path(@conn, :edit, inv) %></span>
+      <% end %>
+
+      <%= if current_user_id?(@conn, @event.user_id) do %>
           <span><%= link "Delete", to: Routes.invite_path(@conn, :delete, inv), method: :delete, data: [confirm: "Are you sure?"] %></span>
         </td>
       <% end %>
@@ -75,3 +105,10 @@
   </div>
 <% end %>
 
+
+
+<% else %>
+
+<h1>Sorry, you were not invited to this event :(</h1>
+
+<% end %>

@@ -1,30 +1,36 @@
+<%= if have_current_user?(@conn) do %>
+
 <div class="row">
   <div class="col">
-    <h1>Event Feed</h1>
-    <%= if have_current_user?(@conn) do %>
-      <p><%= link "New Event", to: Routes.event_path(@conn, :new) %></p>
-    <% end %>
+      <p><%= link "Create A New Event", to: Routes.event_path(@conn, :new) %></p>
+   
   </div>
 </div>
+
 <!-- taken from Prof Nat Tuck's lecture notes -->
+
+<h1>Your Events</h1>
+
 <div class="row">
   <%= for event <- @events do %>
-    <div class="col-sm-4 card">
-      <!--
-      <img class="card-img-top" src="" alt="">
-      -->
+    <%= if current_user_id?(@conn, event.user_id) do %>
+      <div class="col-sm-4 card">
+        <div class="card-title">
+          <p class="card-text"><%=event.name %></p>
+        </div>
 
-      <div class="card-title">
-        <p class="card-text"><%=event.name %></p>
-      </div>
-
-      <div class="card-body">
-        <p class="card-text"><%=event.body %></p>
-        <p class="card-text"><%=event.date %></p>
-	<p class="card-text">Event made by <%=event.user.name %></p>
-        <%= link "view", to: Routes.event_path(@conn, :show, event) %>
-      </div>
+        <div class="card-body">
+          <p class="card-text"><%=event.body %></p>
+          <p class="card-text"><%=event.date %></p>
+  	  <p class="card-text">Event made by <%=event.user.name %></p>
+          <%= link "view", to: Routes.event_path(@conn, :show, event) %>
+        </div>
+    <% end %>
 
     </div>
   <% end %>
 </div>
+
+<% else %>
+  <p> Log in to create a new event and invite your friends! </p>
+<% end %>

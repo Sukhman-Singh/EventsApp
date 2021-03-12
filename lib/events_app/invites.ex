@@ -37,6 +37,13 @@ defmodule EventsApp.Invites do
   """
   def get_invite!(id), do: Repo.get!(Invite, id)
 
+  def get_invite_by_email_and_event(user_email, event_id) do
+    Invite
+    |> where(event_id: ^event_id)
+    |> where(user_email: ^user_email)
+    |> Repo.one
+  end
+
   @doc """
   Creates a invite.
 
@@ -50,7 +57,6 @@ defmodule EventsApp.Invites do
 
   """
   def create_invite(attrs \\ %{}) do
-	IO.inspect attrs
     attrs = Map.put(attrs, "response", "noreply")
     %Invite{}
     |> Invite.changeset(attrs)

@@ -3,7 +3,8 @@
 <table>
   <thead>
     <tr>
-      <th>User email</th>
+      <th>Event ID</th>
+      <th>User Email</th>
       <th>Response</th>
 
       <th></th>
@@ -12,6 +13,7 @@
   <tbody>
 <%= for invite <- @invites do %>
     <tr>
+      <td><%= invite.event_id %></td>
       <td><%= invite.user_email %></td>
       <td><%= invite.response %></td>
 
