@@ -3,6 +3,7 @@ defmodule EventsAppWeb.UserController do
 
   alias EventsApp.Users
   alias EventsApp.Users.User
+  alias EventsApp.Photos
 
   def index(conn, _params) do
     users = Users.list_users()
@@ -15,6 +16,7 @@ defmodule EventsAppWeb.UserController do
   end
 
   def create(conn, %{"user" => user_params}) do
+
     emailTaken = Users.get_user_by_email(Map.get(user_params, "email"))
     userTaken = Users.get_user_by_name(Map.get(user_params, "name"))
  
@@ -28,6 +30,11 @@ defmodule EventsAppWeb.UserController do
         |> put_flash(:error, "Name already in use.")
         |> redirect(to: Routes.user_path(conn, :index))
       else 
+        up = user_params["photo"]
+        {:ok, hash} = Photos.save_photo(up.filename, up.path)
+        user_params = user_params
+        |> Map.put("photo_hash", hash)
+
         case Users.create_user(user_params) do
           {:ok, user} ->
             conn
@@ -54,6 +61,15 @@ defmodule EventsAppWeb.UserController do
 
   def update(conn, %{"id" => id, "user" => user_params}) do
     user = Users.get_user!(id)
+    up = user_params["photo"]
+
+    user_params = if up do
+      
+      {:ok, hash} = Photos.save_photo(up.filename, up.path)
+      Map.put(user_params, "photo_hash", hash)
+    else
+      user_params
+    end
 
     case Users.update_user(user, user_params) do
       {:ok, user} ->
@@ -74,4 +90,13 @@ defmodule EventsAppWeb.UserController do
     |> put_flash(:info, "User deleted successfully.")
     |> redirect(to: Routes.user_path(conn, :index))
   end
+
+  def photo(conn, %{"id" => id}) do
+    user = Users.get_user!(id)
+    {:ok, _name, data} = Photos.load_photo(user.photo_hash)
+    conn
+    |> put_resp_content_type("image/jpeg")
+    |> send_resp(200, data)
+  end
+
 end

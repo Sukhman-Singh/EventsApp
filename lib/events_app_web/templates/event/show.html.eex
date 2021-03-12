@@ -29,8 +29,19 @@
 <%= for comm <- @event.comments do %>
   <div class="card">
     <div class="card-body">
-      <p>Comment by <%= comm.user.name %></p>
+      <div>
+        <img src="<%= Routes.user_path(@conn, :photo, comm.user) %>" alt="" width="50" height="50">
+        <p><%= comm.user.name %></p>
+      </div>
       <p class="card-text"><%= comm.body %></p>
+
+      <%= if current_user_id?(@conn, comm.user_id) do %>
+        <td>
+          <span><%= link "Edit", to: Routes.comment_path(@conn, :edit, comm) %></span>
+          <span><%= link "Delete", to: Routes.comment_path(@conn, :delete, comm), method: :delete, data: [confirm: "Are you sure?"] %></span>
+        </td>
+      <% end %>
+
     </div>
   </div>
 <% end %>

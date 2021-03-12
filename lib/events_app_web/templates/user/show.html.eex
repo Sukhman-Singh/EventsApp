@@ -7,6 +7,10 @@
     <%= @user.name %>
   </li>
 
+  <div>
+    <img src="<%= Routes.user_path(@conn, :photo, @user) %>" alt="" width="200" height="200">
+  </div>
+
   <li>
     <strong>Email:</strong>
     <%= @user.email %>
